@@ -489,6 +489,248 @@ def msa(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=
         subprocess.call(_command, shell=True)
 
 
+def msa_f8(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=None, ly=None,
+        foc=None, tx=None, ty=None, otx=None, oty=None, sr=None, abf=None, buni=None, uuni=None,
+        ctem=False, txtout=False, _3dout=False, gaussap=False, wave=False, avwave=False,
+        detimg=False, verbose=False, debug=False, lapro=False, waveft=False, avwaveft=False,
+        pdif=False, pimg=False, epc=False, vtx=None, detslc=None, kmom=None,
+        padif=False, silavwave=False, silavwaveft=False, silent=False, rti=False, output=False):
+    """
+    Runs msa_f8 from Dr. Probe
+
+    Parameters
+    ----------
+    prm_file : str
+        The filename of the msa parameter file.
+    output_file : str
+        The filename of the output data. Example: 'Test.wav'.
+        The result is a 4-byte floating point array for a STEM image calculation and an 8-byte
+        complex array for a CTEM wave calculation.
+    input_image : str, optional
+        Input image filename.
+        This option is used for the application of partial spatial coherence in STEM mode
+        calculations only.
+        Equivalent to the option '-in' in msa in Dr. Probe.
+    inw : (str, int), optional
+        Tuple. (Input wave filename, Input slice number).
+        Equivalent to the option '-inw' in msa in Dr. Probe.
+    px : int, optional
+        Horizontal scan pixel number.
+        Defines the x-scan position or scan column number starting with 0 up to number of scan
+        columns -1.
+    py : int, optional
+        Vertical scan pixel number.
+        Defines the y-scan position or scan row number starting with 0 up to number of scan rows
+        -1.
+    lx : int, optional
+        Last horizontal scan pixel.
+        Defines the last x-scan position (scan column) number starting from 0 up to # scan
+        columns -1 to be calculated, in this case -px defines the first scan column to be
+        calculated.
+    ly : int, optional
+        Last vertical scan pixel.
+        Defines the last y-scan position (scan row) number starting from 0 up to # scan
+        rows -1 to be calculated, in this case -py defines the first scan row to be calculated.
+    foc : float, optional
+        Defines the probe or image wave defocus in nm. Overrides the value set in the parameter
+        file.
+    tx : float, optional
+        Defines the x beam tilt in mrad. Overrides the value set in the parameter file.
+    ty : float, optional
+        Defines the y beam tilt in mrad. Overrides the value set in the parameter file.
+    otx : float, optional
+        Defines the x object tilt in mrad. Overrides the value set in the parameter file.
+    oty : float, optional
+        Defines the y object tilt in mrad. Overrides the value set in the parameter file.
+    sr : float, optional
+        Effective source radius in nm.
+        Defines the half-width of the effective geometrical source profile in nm. Overrides the
+        value set in the parameter file. Half-width definitions depend on the source profile
+        chosen in the parameter file.
+    abf : float, optional
+        Applies a fractional absorption potential. Only when the slice files are given with
+        potential data, not possible in case of phase grating data.
+    buni : float, optional
+        Applies a universal Debye-Waller factor. The float value is the isotropic Debye-Waller
+        parameter (Biso) in nm^2. Only when the slice files are given with potential data,
+        not possible in case of phase grating data.
+    uuni : float, optional
+        Applies a universal Debye-Waller factor. The float value is the isotropic Debye-Waller
+        parameter (Uiso) in A^2. Only when the slice files are given with potential data,
+        not possible in case of phase grating data.
+    ctem : bool, optional
+        Activates CTEM mode calculating a coherent(!) wave function. Image aberrations can be
+        applied to the exit-plane wave function.
+    txtout : bool, optional
+        STEM mode only. Outputs the simulation result in form of a text file, which includes a
+        header and lists of data. See 'msa howto.txt' (section 4) for an explanation of the text
+        file format.
+    _3dout : bool, optional:
+        STEM mode only. The output of results result is in 4-byte floating point arrays. The
+        third dimension represents the thickness series. One file is generated for each detector
+        and a respective suffix with the detector name is appended. This option applies also
+        when using input image files with the option 'input_image' ('-in' in msa). Files
+        will be handled consistently only, i.e. 3d -> 3d or 2d -> 2d.
+    gaussap : bool, optional
+        Applies a gaussian illumination aperture in STEM mode leading to a larger delocalization
+        of the incident probe. The 1/e width of the applied Gaussian is defined by the aperture
+        size parameter in mrad.
+    wave : bool, optional
+        Activates wave export at selected slices. Wavefunctions are saved to file name = name of
+        output file. The file name is extended with ".wav". Index suffixes are added to denote
+        the scan pixel, the object slice and the frozen phonon variation index.
+    avwave : bool, optional
+        Activates the output of an average wavefunctions over multiple frozen lattice calculations.
+    detimg : bool, optional
+        Images representing the applied detector functions in diffraction space are saved to files.
+    verbose : bool, optional
+        Activates additional program output to the console.
+    debug : bool, optional
+        Activates additional debug output to the console.
+    lapro : bool, optional
+        Use large-angle propagators exp(-2*Pi/Lambda*(1/cos(theta)-1)) instead of the default
+        Fresnel propagators exp(-I*Pi*Lambda*q^2).
+    waveft : bool, optional
+        Skip the extra inverse Fourier transform done when using option "wave".
+    avwaveft : bool, optional
+        Skip the extra inverse Fourier transform done when using option "avwave"
+    pdif : bool, optional
+        Output of integrated diffraction patterns for each probe position.
+    pimg : bool, optional
+        Output of integrated probe images for each probe position.
+    epc : bool, optional
+        Explicit averaging option for partial coherence (focus spread and source size) in the
+        STEM multislice.
+    vtx : int, optional
+        Enable the use of vortex probes in STEM mode. The integer specifies the orbital angular
+        momentum of the probe. The second parameter defines the maximum range of moment
+        integration in mrad.
+    detslc : string, optional
+        Input of slice numbers by a text file. These numbers define the slices, where detector
+        readout and other data output will be done. The text file should provide a list of
+        integer numbers with one number per line. The incident plane is identified by 0. This
+        option overrides the periodic detection input made by the parameter file.
+    kmom : tuple, optional
+        Output 64-bit k-space momentum images for each integral moment of the order 0 up to the
+        first integer parameter.
+    padif : bool, optional
+        Output of probe positioned averaged diffraction patterns
+    silavwave : bool, optional
+        Activates the calculation of average wave functions over multiple frozen-lattice
+        calculations. The switch refers to a real-space representation of the wave function.
+        There will be no output of the wave function, but the separation of elastic and
+        thermal-diffuse scattering is enabled for separate output of other signal (STEM images,
+        diffraction patterns, probe images and moments of the intensity distribution in the
+        diffraction plane.)
+    silavwaveft : bool, optional
+        Activates the calculation of average wave functions over multiple frozen-lattice
+        calculations. The switch refers to a reciprocal-space representation of the wave function.
+        There will be no output of the wave function, but the separation of elastic and
+        thermal-diffuse scattering is enabled for separate output of other signal (STEM images,
+        diffraction patterns, probe images and moments of the intensity distribution in the
+        diffraction plane.)
+    silent : bool, optional
+        Flag for deactivating all console output.
+    rti : bool, optional
+        Run time information.
+    output : bool, optional
+        Flag for terminal output
+    """
+
+    _command = "msa_f8 -prm {} -out {}".format(prm_file, output_file)
+
+    # Make folder for the output files if it doesn't exist already
+    directory = os.path.split(output_file)[0]
+    if directory:
+        if not os.path.isdir(directory):
+            os.makedirs(directory, exist_ok=True)
+
+    if input_image is not None:
+        _command += ' -in {}'.format(input_image)
+    if inw is not None:
+        _command += ' -inw {} {}'.format(inw[0], inw[1])
+    if px is not None:
+        _command += ' -px {}'.format(px)
+    if py is not None:
+        _command += ' -py {}'.format(py)
+    if lx is not None:
+        _command += ' -lx {}'.format(lx)
+    if ly is not None:
+        _command += ' -ly {}'.format(ly)
+    if foc is not None:
+        _command += ' -foc {}'.format(foc)
+    if tx is not None:
+        _command += ' -tx {}'.format(tx)
+    if ty is not None:
+        _command += ' -ty {}'.format(ty)
+    if otx is not None:
+        _command += ' -otx {}'.format(otx)
+    if oty is not None:
+        _command += ' -oty {}'.format(oty)
+    if sr is not None:
+        _command += ' -sr {}'.format(sr)
+    if abf is not None:
+        _command += ' -abf {}'.format(abf)
+    if buni is not None:
+        _command += ' -buni {}'.format(buni)
+    if uuni is not None:
+        _command += ' -uuni {}'.format(uuni)
+    if ctem:
+        _command += ' /ctem'
+    if txtout:
+        _command += ' /txtout'
+    if _3dout:
+        _command += ' /3dout'
+    if gaussap:
+        _command += ' /gaussap'
+    if wave:
+        _command += ' /wave'
+    if avwave:
+        _command += ' /avwave'
+    if detimg:
+        _command += ' /detimg'
+    if verbose:
+        _command += ' /verbose'
+    if debug:
+        _command += ' /debug'
+    if lapro:
+        _command += ' /lapro'
+    if waveft:
+        _command += ' /waveft'
+    if avwaveft:
+        _command += ' /avwaveft'
+    if pdif:
+        _command += ' /pdif'
+    if pimg:
+        _command += ' /pimg'
+    if epc:
+        _command += ' /epc'
+    if vtx is not None:
+        _command += ' /vtx {}'.format(vtx)
+    if detslc is not None:
+        _command += ' -detslc {}'.format(detslc)
+    if kmom is not None:
+        _command += ' -kmom {} {}'.format(kmom[0], kmom[1])
+    if padif:
+        _command += ' /padif'
+    if silavwave:
+        _command += ' /silavwave'
+    if silavwaveft:
+        _command += ' /silavwaveft'
+    if silent:
+        _command += ' /silent'
+    if rti:
+        _command += ' /rti'
+
+    # Run msa command
+    if output:
+        co = subprocess.check_output(_command, shell=True)
+        print('Performed msa with the following command:\n', _command)
+        print(co.decode('utf-8'))
+    else:
+        subprocess.call(_command, shell=True)
+
+
 def wavimg(prm_file, output_file=None, foc=None, btx=None, bty=None, oar=None,
            sbshx=None, sbshy=None, sil=False, dbg=False, nli=False, rnsb=False,
            rti=False, output=False):
