@@ -395,7 +395,8 @@ def msa(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=
         Flag for terminal output
     """
 
-    _command = "msa -prm {} -out {}".format(prm_file, output_file)
+    _command = "ulimit -s unlimited && "
+    _command += "msa -prm {} -out {}".format(prm_file, output_file)
 
     # Make folder for the output files if it doesn't exist already
     directory = os.path.split(output_file)[0]
@@ -636,8 +637,9 @@ def msa_f8(prm_file, output_file, input_image=None, inw=None, px=None, py=None, 
     output : bool, optional
         Flag for terminal output
     """
-
-    _command = "msa_f8 -prm {} -out {}".format(prm_file, output_file)
+    
+    _command = "ulimit -s unlimited && "
+    _command += "msa_f8 -prm {} -out {}".format(prm_file, output_file)
 
     # Make folder for the output files if it doesn't exist already
     directory = os.path.split(output_file)[0]
