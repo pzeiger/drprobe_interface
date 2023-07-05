@@ -139,6 +139,7 @@ class MsaPrm(object):
         self.min_num_frozen = msa_dict.get('min_num_frozen', 1)
         self.det_readout_period = msa_dict.get('det_readout_period', 1)
         self.tot_number_of_slices = msa_dict.get('tot_number_of_slices', 10)
+        self.slice_stack = msa_dict.get('slice_stack', [])
 
     @property
     def number_of_aberrations(self):
@@ -206,6 +207,9 @@ class MsaPrm(object):
             self.min_num_frozen = int(content[29+n][0])
             self.det_readout_period = int(content[30+n][0])
             self.tot_number_of_slices = int(content[31+n][0])
+            self.slice_stack = []
+            for line in content[32+n:]:
+                self.slice_stack.append(line.strip().split()[0])
 
         if output:
             print("Parameters successfully loaded from file '{}'!".format(prm_filename))
@@ -324,26 +328,33 @@ class MsaPrm(object):
             prm.write("{} ! {}\n".format(self.det_readout_period, string_28))
             string_29 = "Number of slices in the object."
             prm.write("{} ! {}\n".format(self.tot_number_of_slices, string_29))
-
-            if random_slices:
-                if self.tot_number_of_slices < self.number_of_slices:
-                    ld = int(self.number_of_slices - self.tot_number_of_slices)
-                    lo = np.random.randint(0, ld)
-                    for i in range(lo, self.tot_number_of_slices + lo):
-                        prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
-                elif self.tot_number_of_slices >= self.number_of_slices:
-                    fm = self.factors(self.tot_number_of_slices)
-                    idx = int((len(fm) + 1) / 2)
-                    len_div = int(fm[idx])
-                    num_div = int(self.tot_number_of_slices / len_div)
-                    ld = self.number_of_slices - len_div
-                    for j in range(num_div):
-                        lo = np.random.randint(0, ld)
-                        for i in range(lo, len_div + lo):
-                            prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
-            else:
-                for i in range(self.tot_number_of_slices):
+            
+            if self.slice_stack:
+                assert len(self.slice_stack) >= self.tot_number_of_slices
+                if len(self.slice_stack) != self.tot_number_of_slices:
+                    print('Warning: length of slice stack not equal to total number of slices!')
+                for i in self.slice_stack:
                     prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
+            else:
+                if random_slices:
+                    if self.tot_number_of_slices < self.number_of_slices:
+                        ld = int(self.number_of_slices - self.tot_number_of_slices)
+                        lo = np.random.randint(0, ld)
+                        for i in range(lo, self.tot_number_of_slices + lo):
+                            prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
+                    elif self.tot_number_of_slices >= self.number_of_slices:
+                        fm = self.factors(self.tot_number_of_slices)
+                        idx = int((len(fm) + 1) / 2)
+                        len_div = int(fm[idx])
+                        num_div = int(self.tot_number_of_slices / len_div)
+                        ld = self.number_of_slices - len_div
+                        for j in range(num_div):
+                            lo = np.random.randint(0, ld)
+                            for i in range(lo, len_div + lo):
+                                prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
+                else:
+                    for i in range(self.tot_number_of_slices):
+                        prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
             prm.write("End of parameter file.")
 
         # Sort prm file
