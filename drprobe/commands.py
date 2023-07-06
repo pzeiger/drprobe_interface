@@ -247,7 +247,7 @@ def celslc(cel_file, slice_name, ht, nx=None, ny=None, nz=None, abf=None, absorb
         subprocess.call(_command, shell=True)
 
 
-def msa(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=None, ly=None,
+def msa(prm_file, output_file, input_image=None, inw=None, inwft=None, px=None, py=None, lx=None, ly=None,
         foc=None, tx=None, ty=None, otx=None, oty=None, sr=None, abf=None, buni=None, uuni=None,
         ctem=False, txtout=False, _3dout=False, gaussap=False, wave=False, avwave=False,
         detimg=False, verbose=False, debug=False, lapro=False, waveft=False, avwaveft=False,
@@ -272,6 +272,9 @@ def msa(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=
     inw : (str, int), optional
         Tuple. (Input wave filename, Input slice number).
         Equivalent to the option '-inw' in msa in Dr. Probe.
+    inwft : (str, int), optional
+        Tuple. (Input wave filename, Input slice number).
+        Equivalent to the option '-inwft' in msa in Dr. Probe.
     px : int, optional
         Horizontal scan pixel number.
         Defines the x-scan position or scan column number starting with 0 up to number of scan
@@ -408,6 +411,8 @@ def msa(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=
         _command += ' -in {}'.format(input_image)
     if inw is not None:
         _command += ' -inw {} {}'.format(inw[0], inw[1])
+    if inwft is not None:
+        _command += ' -inwft {} {}'.format(inwft[0], inwft[1])
     if px is not None:
         _command += ' -px {}'.format(px)
     if py is not None:
@@ -490,7 +495,7 @@ def msa(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=
         subprocess.call(_command, shell=True)
 
 
-def msa_f8(prm_file, output_file, input_image=None, inw=None, px=None, py=None, lx=None, ly=None,
+def msa_f8(prm_file, output_file, input_image=None, inw=None, inwft=None, px=None, py=None, lx=None, ly=None,
         foc=None, tx=None, ty=None, otx=None, oty=None, sr=None, abf=None, buni=None, uuni=None,
         ctem=False, txtout=False, _3dout=False, gaussap=False, wave=False, avwave=False,
         detimg=False, verbose=False, debug=False, lapro=False, waveft=False, avwaveft=False,
@@ -515,6 +520,9 @@ def msa_f8(prm_file, output_file, input_image=None, inw=None, px=None, py=None, 
     inw : (str, int), optional
         Tuple. (Input wave filename, Input slice number).
         Equivalent to the option '-inw' in msa in Dr. Probe.
+    inwft : (str, int), optional
+        Tuple. (Input wave filename, Input slice number).
+        Equivalent to the option '-inwft' in msa in Dr. Probe.
     px : int, optional
         Horizontal scan pixel number.
         Defines the x-scan position or scan column number starting with 0 up to number of scan
@@ -651,6 +659,8 @@ def msa_f8(prm_file, output_file, input_image=None, inw=None, px=None, py=None, 
         _command += ' -in {}'.format(input_image)
     if inw is not None:
         _command += ' -inw {} {}'.format(inw[0], inw[1])
+    if inwft is not None:
+        _command += ' -inwft {} {}'.format(inwft[0], inwft[1])
     if px is not None:
         _command += ' -px {}'.format(px)
     if py is not None:
