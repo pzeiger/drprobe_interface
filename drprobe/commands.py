@@ -252,7 +252,7 @@ def msa(prm_file, output_file, input_image=None, inw=None, inwft=None, px=None, 
         ctem=False, txtout=False, _3dout=False, gaussap=False, wave=False, avwave=False,
         detimg=False, verbose=False, debug=False, lapro=False, waveft=False, avwaveft=False,
         pdif=False, pimg=False, epc=False, vtx=None, detslc=None, kmom=None,
-        padif=False, silavwave=False, silavwaveft=False, silent=False, rti=False, output=False):
+        padif=False, silavwave=False, silavwaveft=False, silent=False, rti=False, output=True):
     """
     Runs msa from Dr. Probe
 
@@ -487,12 +487,10 @@ def msa(prm_file, output_file, input_image=None, inw=None, inwft=None, px=None, 
         _command += ' /rti'
 
     # Run msa command
+    co = subprocess.check_output(_command, shell=True)
     if output:
-        co = subprocess.check_output(_command, shell=True)
         print('Performed msa with the following command:\n', _command)
         print(co.decode('utf-8'))
-    else:
-        subprocess.call(_command, shell=True)
 
 
 def msa_f8(prm_file, output_file, input_image=None, inw=None, inwft=None, px=None, py=None, lx=None, ly=None,
@@ -500,7 +498,7 @@ def msa_f8(prm_file, output_file, input_image=None, inw=None, inwft=None, px=Non
         ctem=False, txtout=False, _3dout=False, gaussap=False, wave=False, avwave=False,
         detimg=False, verbose=False, debug=False, lapro=False, waveft=False, avwaveft=False,
         pdif=False, pimg=False, epc=False, vtx=None, detslc=None, kmom=None,
-        padif=False, silavwave=False, silavwaveft=False, silent=False, rti=False, output=False):
+        padif=False, silavwave=False, silavwaveft=False, silent=False, rti=False, output=True):
     """
     Runs msa_f8 from Dr. Probe
 
@@ -735,12 +733,10 @@ def msa_f8(prm_file, output_file, input_image=None, inw=None, inwft=None, px=Non
         _command += ' /rti'
 
     # Run msa command
+    co = subprocess.check_output(_command, shell=True)
     if output:
-        co = subprocess.check_output(_command, shell=True)
         print('Performed msa with the following command:\n', _command)
         print(co.decode('utf-8'))
-    else:
-        subprocess.call(_command, shell=True)
 
 
 def wavimg(prm_file, output_file=None, foc=None, btx=None, bty=None, oar=None,
