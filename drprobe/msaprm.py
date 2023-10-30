@@ -330,7 +330,7 @@ class MsaPrm(object):
             prm.write("{} ! {}\n".format(self.tot_number_of_slices, string_29))
             
             if self.slice_stack:
-                assert len(self.slice_stack) >= self.tot_number_of_slices
+                assert len(self.slice_stack) <= self.tot_number_of_slices
                 if len(self.slice_stack) != self.tot_number_of_slices:
                     print('Warning: length of slice stack not equal to total number of slices!')
                 for i in self.slice_stack:
