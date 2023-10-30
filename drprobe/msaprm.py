@@ -334,7 +334,7 @@ class MsaPrm(object):
                 if len(self.slice_stack) != self.tot_number_of_slices:
                     print('Warning: length of slice stack not equal to total number of slices!')
                 for i in self.slice_stack:
-                    prm.write("{} ! Slice ID\n".format(i % self.number_of_slices))
+                    prm.write("{} ! Slice ID\n".format(i))
             else:
                 if random_slices:
                     if self.tot_number_of_slices < self.number_of_slices:
