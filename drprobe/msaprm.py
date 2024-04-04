@@ -326,16 +326,21 @@ class MsaPrm(object):
             prm.write("{} ! {}\n".format(self.min_num_frozen, string_27))
             string_28 = "Detector readout period in slices."
             prm.write("{} ! {}\n".format(self.det_readout_period, string_28))
-            string_29 = "Number of slices in the object."
-            prm.write("{} ! {}\n".format(self.tot_number_of_slices, string_29))
             
             if self.slice_stack:
-                assert len(self.slice_stack) <= self.tot_number_of_slices
-                if len(self.slice_stack) != self.tot_number_of_slices:
-                    print('Warning: length of slice stack not equal to total number of slices!')
+                assert len(self.slice_stack) <= self.number_of_slices
+                
+                self.tot_number_of_slices = len(self.slice_stack)
+                string_29 = "Number of slices in the object."
+                prm.write("{} ! {}\n".format(self.tot_number_of_slices, string_29))
+
+                if len(self.slice_stack) != self.number_of_slices:
+                    print('Warning: length of slice stack not equal to total the number of slice files!')
                 for i in self.slice_stack:
                     prm.write("{} ! Slice ID\n".format(i))
             else:
+                string_29 = "Number of slices in the object."
+                prm.write("{} ! {}\n".format(self.tot_number_of_slices, string_29))
                 if random_slices:
                     if self.tot_number_of_slices < self.number_of_slices:
                         ld = int(self.number_of_slices - self.tot_number_of_slices)
