@@ -470,7 +470,7 @@ def msa(prm_file, output_file, input_image=None, inw=None, inwft=None, px=None, 
     if epc:
         _command += ' /epc'
     if vtx is not None:
-        _command += ' /vtx {}'.format(vtx)
+        _command += ' -vtx {}'.format(vtx)
     if detslc is not None:
         _command += ' -detslc {}'.format(detslc)
     if kmom is not None:
@@ -718,7 +718,7 @@ def msa_f8(prm_file, output_file, input_image=None, inw=None, inwft=None, px=Non
     if epc:
         _command += ' /epc'
     if vtx is not None:
-        _command += ' /vtx {}'.format(vtx)
+        _command += ' -vtx {}'.format(vtx)
     if detslc is not None:
         _command += ' -detslc {}'.format(detslc)
     if kmom is not None:
